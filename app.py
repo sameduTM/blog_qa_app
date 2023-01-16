@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.static_folder = 'static'
 app.app_context().push()
 db = SQLAlchemy(app)
-
+db.init_app(app)
 
 class avrilBlog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
