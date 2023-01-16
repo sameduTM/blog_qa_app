@@ -6,11 +6,11 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////posts.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 app.static_folder = 'static'
 app.app_context().push()
+db = SQLAlchemy(app)
 
 
 class avrilBlog(db.Model):
@@ -112,7 +112,6 @@ def delete(id):
     return redirect('/posts')
 
 db.create_all()
-
 
 if __name__ == '__main__':
     app.run(debug=True)
