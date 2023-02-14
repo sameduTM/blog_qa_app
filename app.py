@@ -1,16 +1,25 @@
-from flask import Flask, render_template, request, redirect, current_app
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-#from sqlmodel import Session, select
-#from flask_bootstrap import Bootstrap
+import os
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+# from sqlmodel import Session, select
+# from flask_bootstrap import Bootstrap
 
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////posts.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+    'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.static_folder = 'static'
 app.app_context().push()
 db = SQLAlchemy(app)
+
+
 
 
 class avrilBlog(db.Model):
@@ -29,18 +38,29 @@ class avrilBlog(db.Model):
 @app.route('/')
 @app.route('/home')
 @app.route('/avrilWriters')
-
 @app.route("/")
 def index():
     return render_template('index.html')
+
 
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            return redirect(url_for('new_post'))
+    return render_template('login.html', error=error)
 
 
 
@@ -48,6 +68,7 @@ def contact():
 def blog(id):
     current_post = avrilBlog.query.filter_by(id=id).first_or_404()
     return render_template('blog.html', title='title', current_post=current_post)
+
 
 @app.route('/posts/new', methods=['GET', 'POST'])
 def new_post():
@@ -66,7 +87,6 @@ def new_post():
 
 
 ROWS_PER_PAGE = 2
-
 
 
 @app.route('/posts',  methods=['GET', 'POST'])
@@ -111,7 +131,7 @@ def delete(id):
     db.session.commit()
     return redirect('/posts')
 
-db.create_all()
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(debug=True)
