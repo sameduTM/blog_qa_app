@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.static_folder = 'static'
 app.app_context().push()
 db = SQLAlchemy(app)
-
+db.init_app(app)
 
 
 
