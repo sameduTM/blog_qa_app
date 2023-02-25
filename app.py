@@ -109,7 +109,7 @@ def posts():
         return render_template('posts.html', posts=all_posts)
 
 
-@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@app.route('/posts/<int:id>/edit', methods=['GET', 'POST'])
 def edit(id):
     to_edit = avrilBlog.query.get_or_404(id)
     if request.method == 'POST':
